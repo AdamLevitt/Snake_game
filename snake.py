@@ -7,6 +7,7 @@ import os
 
 pygame.init()
 pygame.display.set_caption("SNAKE")
+pygame.font.init()
 
 BLOCK_SIZE = 40
 NUM_CELLS = 20
@@ -19,8 +20,10 @@ FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 
+SCORE_FONT = pygame.font.SysFont("comicsans", 30)
+
 TIMER = pygame.USEREVENT
-pygame.time.set_timer(TIMER, 250)
+pygame.time.set_timer(TIMER, 150)
 
 
 class FRUIT:
@@ -44,6 +47,7 @@ class SNAKE:
     def __init__(self):
         self.snake_list = [Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
         self.dir = Vector2(-1, 0)
+        self.length = len(self.snake_list)
 
     def draw_snake(self):
         for square in self.snake_list:
@@ -69,29 +73,41 @@ class SNAKE:
         copy_move.insert(0, new_snake_head)
         self.snake_list = copy_move[:]
 
+    def snake_grow(self):
+        end_1 = self.snake_list[-1]
+        self.snake_list.insert(-1, end_1)
+        self.length += 1
 
-def display_board():
+
+def display_board(score):
     WINDOW.fill(BLACK)
     for across in range(0, WIDTH, BLOCK_SIZE):
         for down in range(BLOCK_SIZE, HEIGHT, BLOCK_SIZE):
             rectangle = pygame.Rect(across, down, BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(WINDOW, WHITE, rectangle, 1)
+    score_text = SCORE_FONT.render("Score: " + str(score), 1, WHITE)
+    WINDOW.blit(score_text,(WIDTH - score_text.get_width() - 10, 2))
 
 
 def main():
     run = True
     clock = pygame.time.Clock()
-    snake = []
+    score = 0
 
     snake = SNAKE()
     fruit = FRUIT(snake.snake_list)
 
     while run:
         clock.tick(FPS)
-        display_board()
+        display_board(score)
 
-        while fruit.position in snake.snake_list:
+        if fruit.position in snake.snake_list:
             fruit = FRUIT(snake.snake_list)
+            score += 1
+            snake.snake_grow()
+
+            if score % 5 == 0:
+                print('yes')
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
