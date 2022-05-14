@@ -48,15 +48,17 @@ class SNAKE:
         new_snake_head = copy_move[0] + self.dir
 
         if new_snake_head.x == -1.0:
-            new_snake_head += Vector2(20,0)
+            new_snake_head += Vector2(20, 0)
 
         if new_snake_head.x == 20.0:
-            new_snake_head += Vector2(-20,0)
-        
+            new_snake_head -= Vector2(20, 0)
+
         if new_snake_head.y == 0.0:
             new_snake_head += Vector2(0, 19)
 
-        print(new_snake_head, new_snake_head.x)
+        if new_snake_head.y == 20.0:
+            new_snake_head -= Vector2(0, 19)
+
         copy_move.insert(0, new_snake_head)
         self.snake = copy_move[:]
 
@@ -89,18 +91,18 @@ def main():
 
             if event.type == TIMER:
                 snake.move()
-            
+
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP and snake.dir != Vector2(0, 1):
                     snake.dir = Vector2(0, -1)
 
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN and snake.dir != Vector2(0, -1):
                     snake.dir = Vector2(0, 1)
 
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT and snake.dir != Vector2(1, 0):
                     snake.dir = Vector2(-1, 0)
 
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT and snake.dir != Vector2(-1, 0):
                     snake.dir = Vector2(1, 0)
 
         fruit.draw_fruit()
