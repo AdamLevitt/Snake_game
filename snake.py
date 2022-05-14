@@ -1,6 +1,7 @@
 import pygame
 from pygame.math import Vector2
 import sys
+import random
 import os
 
 pygame.init()
@@ -17,17 +18,47 @@ FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 
+TIMER = pygame.USEREVENT
+pygame.time.set_timer(TIMER, 250)
+
 
 class FRUIT:
     def __init__(self):
-        self.x = 40
-        self.y = 80
-        self.position = Vector2(self.x,self.y)
-    
+        self.x = random.randint(0, NUM_CELLS - 1)
+        self.y = random.randint(1, NUM_CELLS - 1)
+        self.position = Vector2(self.x, self.y)
+
     def draw_fruit(self):
-        fruit_rect = pygame.Rect(self.position.x,self.position.y,BLOCK_SIZE,BLOCK_SIZE)
+        fruit_rect = pygame.Rect(int(self.position.x * BLOCK_SIZE), int(self.position.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
         pygame.draw.rect(WINDOW, GREEN, fruit_rect)
 
+
+class SNAKE:
+    def __init__(self):
+        self.snake = [Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
+        self.dir = Vector2(-1, 0)
+
+    def draw_snake(self):
+        for square in self.snake:
+            snake_rect = pygame.Rect(int(square.x * BLOCK_SIZE), int(square.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
+            pygame.draw.rect(WINDOW, BLUE, snake_rect)
+
+    def move(self):
+        copy_move = self.snake[:-1]
+        new_snake_head = copy_move[0] + self.dir
+
+        if new_snake_head.x == -1.0:
+            new_snake_head += Vector2(20,0)
+
+        if new_snake_head.x == 20.0:
+            new_snake_head += Vector2(-20,0)
+        
+        if new_snake_head.y == 0.0:
+            new_snake_head += Vector2(0, 19)
+
+        print(new_snake_head, new_snake_head.x)
+        copy_move.insert(0, new_snake_head)
+        self.snake = copy_move[:]
 
 
 def display_board():
@@ -38,51 +69,43 @@ def display_board():
             pygame.draw.rect(WINDOW, WHITE, rectangle, 1)
 
 
-def handle_snake(keys, snake):
-    last_key = ""
-
-    if keys[pygame.K_UP] and last_key != "down":
-        last_key = "up"
-
-    if keys[pygame.K_DOWN] and last_key != "up":
-        last_key = "down"
-
-    if keys[pygame.K_RIGHT] and last_key != "left":
-        last_key = "right"
-
-    if keys[pygame.K_LEFT] and last_key != "right":
-        last_key = "left"
-
-
 def main():
     run = True
     clock = pygame.time.Clock()
     snake = []
 
     fruit = FRUIT()
-
-    # Initial Snake
-    for squ in range(INITIAL_SIZE):
-        square = pygame.Rect((WIDTH / 2) + BLOCK_SIZE, HEIGHT / 2, BLOCK_SIZE, BLOCK_SIZE)
-        square.x -= squ * BLOCK_SIZE
-        snake.append(square)
+    snake = SNAKE()
 
     while run:
         clock.tick(FPS)
+        display_board()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-                sys.quit()
+                sys.exit()
 
-        keys = pygame.key.get_pressed()
-        handle_snake(keys, snake)
-        print(snake)
-        display_board()
+            if event.type == TIMER:
+                snake.move()
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    snake.dir = Vector2(0, -1)
+
+                if event.key == pygame.K_DOWN:
+                    snake.dir = Vector2(0, 1)
+
+                if event.key == pygame.K_LEFT:
+                    snake.dir = Vector2(-1, 0)
+
+                if event.key == pygame.K_RIGHT:
+                    snake.dir = Vector2(1, 0)
+
         fruit.draw_fruit()
+        snake.draw_snake()
         pygame.display.update()
-
-
 
 
 if __name__ == "__main__":
