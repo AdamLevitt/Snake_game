@@ -1,3 +1,4 @@
+from pickle import LIST
 import pygame
 from pygame.math import Vector2
 import sys
@@ -23,10 +24,16 @@ pygame.time.set_timer(TIMER, 250)
 
 
 class FRUIT:
-    def __init__(self):
+    def __init__(self, list_check: LIST):
         self.x = random.randint(0, NUM_CELLS - 1)
         self.y = random.randint(1, NUM_CELLS - 1)
         self.position = Vector2(self.x, self.y)
+        self.list_check = list_check
+
+        while self.position in self.list_check:
+            self.x = random.randint(0, NUM_CELLS - 1)
+            self.y = random.randint(1, NUM_CELLS - 1)
+            self.position = Vector2(self.x, self.y)
 
     def draw_fruit(self):
         fruit_rect = pygame.Rect(int(self.position.x * BLOCK_SIZE), int(self.position.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
@@ -35,16 +42,16 @@ class FRUIT:
 
 class SNAKE:
     def __init__(self):
-        self.snake = [Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
+        self.snake_list = [Vector2(5, 10), Vector2(6, 10), Vector2(7, 10)]
         self.dir = Vector2(-1, 0)
 
     def draw_snake(self):
-        for square in self.snake:
+        for square in self.snake_list:
             snake_rect = pygame.Rect(int(square.x * BLOCK_SIZE), int(square.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(WINDOW, BLUE, snake_rect)
 
     def move(self):
-        copy_move = self.snake[:-1]
+        copy_move = self.snake_list[:-1]
         new_snake_head = copy_move[0] + self.dir
 
         if new_snake_head.x == -1.0:
@@ -60,7 +67,7 @@ class SNAKE:
             new_snake_head -= Vector2(0, 19)
 
         copy_move.insert(0, new_snake_head)
-        self.snake = copy_move[:]
+        self.snake_list = copy_move[:]
 
 
 def display_board():
@@ -76,12 +83,15 @@ def main():
     clock = pygame.time.Clock()
     snake = []
 
-    fruit = FRUIT()
     snake = SNAKE()
+    fruit = FRUIT(snake.snake_list)
 
     while run:
         clock.tick(FPS)
         display_board()
+
+        while fruit.position in snake.snake_list:
+            fruit = FRUIT(snake.snake_list)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
