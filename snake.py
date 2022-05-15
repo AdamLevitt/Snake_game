@@ -1,9 +1,7 @@
-from pickle import LIST
 import pygame
 from pygame.math import Vector2
 import sys
 import random
-import os
 
 pygame.init()
 pygame.display.set_caption("SNAKE")
@@ -25,12 +23,13 @@ SCORE_FONT = pygame.font.SysFont("comicsans", 25)
 
 speed = 150
 level = 1
-TIMER = pygame.USEREVENT
+TIMER = pygame.USEREVENT + 1
+HIT = pygame.USEREVENT + 2
 pygame.time.set_timer(TIMER, speed)
 
 
 class FRUIT:
-    def __init__(self, list_check: LIST):
+    def __init__(self, list_check):
         self.x = random.randint(0, NUM_CELLS - 1)
         self.y = random.randint(1, NUM_CELLS - 1)
         self.position = Vector2(self.x, self.y)
@@ -72,6 +71,10 @@ class SNAKE:
 
         if new_snake_head.y == 20.0:
             new_snake_head -= Vector2(0, 19)
+
+        if new_snake_head in copy_move:
+            print("hit")
+            pygame.event.post(pygame.event.Event(HIT))
 
         copy_move.insert(0, new_snake_head)
         self.snake_list = copy_move[:]
@@ -132,6 +135,10 @@ def main():
             if event.type == TIMER:
                 snake.move()
 
+            if event.type == HIT:
+                run = False
+                break
+
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP and snake.dir != Vector2(0, 1):
                     snake.dir = Vector2(0, -1)
@@ -148,6 +155,10 @@ def main():
         fruit.draw_fruit()
         snake.draw_snake()
         pygame.display.update()
+
+    level = 0
+    speed = 150
+    main()
 
 
 if __name__ == "__main__":
