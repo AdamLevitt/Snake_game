@@ -2,10 +2,12 @@ import pygame
 from pygame.math import Vector2
 import sys
 import random
+import os
 
 pygame.init()
 pygame.display.set_caption("SNAKE")
 pygame.font.init()
+pygame.mixer.init()
 
 BLOCK_SIZE = 40
 NUM_CELLS = 20
@@ -19,6 +21,9 @@ FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 MAX_SPEED = 50
+
+FRUIT_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-extra-bonus-in-a-video-game-2045.wav"))
+LOSE_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-player-losing-or-failing-2042.wav"))
 
 COLOR_1 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 COLOR_2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -151,6 +156,7 @@ def main():
 
         # Situation where snake eats fruit
         if fruit.position in snake.snake_list:
+            FRUIT_SOUND.play()
             fruit = FRUIT(snake.snake_list)
             score += 1
             snake.snake_grow()
@@ -177,6 +183,7 @@ def main():
                 snake.move()
 
             if event.type == HIT:
+                LOSE_SOUND.play()
                 run = False
                 level = 0
                 speed = 150
