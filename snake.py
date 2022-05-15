@@ -20,10 +20,12 @@ FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 
-SCORE_FONT = pygame.font.SysFont("comicsans", 30)
+SCORE_FONT = pygame.font.SysFont("comicsans", 25)
 
+speed = 150
+level = 1
 TIMER = pygame.USEREVENT
-pygame.time.set_timer(TIMER, 150)
+pygame.time.set_timer(TIMER, speed)
 
 
 class FRUIT:
@@ -93,6 +95,7 @@ def main():
     run = True
     clock = pygame.time.Clock()
     score = 0
+    global speed
 
     snake = SNAKE()
     fruit = FRUIT(snake.snake_list)
@@ -108,6 +111,9 @@ def main():
 
             if score % 5 == 0:
                 print('yes')
+                speed -= 10
+                pygame.time.set_timer(TIMER, 0)
+                pygame.time.set_timer(TIMER, speed)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
