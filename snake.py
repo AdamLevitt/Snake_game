@@ -24,6 +24,15 @@ MAX_SPEED = 50
 
 FRUIT_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-extra-bonus-in-a-video-game-2045.wav"))
 LOSE_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-player-losing-or-failing-2042.wav"))
+IMAGE_1 = pygame.image.load(os.path.join("assets", "orange-transparent-background-7.png")).convert_alpha()
+IMAGE_2 = pygame.image.load(os.path.join("assets", "Apple-Fruit-Transparent.png")).convert_alpha()
+IMAGE_3 = pygame.image.load(os.path.join("assets", "Banana-PNG-File.png")).convert_alpha()
+IMAGE_4 = pygame.image.load(os.path.join("assets", "Grape-Transparent.png")).convert_alpha()
+ORANGE = pygame.transform.scale(IMAGE_1, (BLOCK_SIZE, BLOCK_SIZE))
+APPLE = pygame.transform.scale(IMAGE_2, (BLOCK_SIZE, BLOCK_SIZE))
+BANANA = pygame.transform.scale(IMAGE_3, (BLOCK_SIZE, BLOCK_SIZE))
+GRAPES = pygame.transform.scale(IMAGE_4, (BLOCK_SIZE, BLOCK_SIZE))
+
 
 COLOR_1 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 COLOR_2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -51,6 +60,8 @@ class FRUIT:
         self.position = Vector2(self.x, self.y)
         self.list_check = list_check
 
+        self.change_fruit()
+
         # Ensure that we are not creating fruits where the snake already exists
         while self.position in self.list_check:
             self.x = random.randint(0, NUM_CELLS - 1)
@@ -60,7 +71,12 @@ class FRUIT:
     def draw_fruit(self):
         """display fruits"""
         fruit_rect = pygame.Rect(int(self.position.x * BLOCK_SIZE), int(self.position.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
-        pygame.draw.rect(WINDOW, GREEN, fruit_rect)
+        WINDOW.blit(self.fruit, fruit_rect)
+        # pygame.draw.rect(WINDOW, GREEN, fruit_rect)
+
+    def change_fruit(self):
+        fruit_list = [APPLE, ORANGE, BANANA, GRAPES]
+        self.fruit = random.choice(fruit_list)
 
 
 class SNAKE:
