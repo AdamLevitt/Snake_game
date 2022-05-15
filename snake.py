@@ -81,14 +81,16 @@ class SNAKE:
         self.length += 1
 
 
-def display_board(score):
+def display_board(score, level):
     WINDOW.fill(BLACK)
     for across in range(0, WIDTH, BLOCK_SIZE):
         for down in range(BLOCK_SIZE, HEIGHT, BLOCK_SIZE):
             rectangle = pygame.Rect(across, down, BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(WINDOW, WHITE, rectangle, 1)
     score_text = SCORE_FONT.render("Score: " + str(score), 1, WHITE)
-    WINDOW.blit(score_text,(WIDTH - score_text.get_width() - 10, 2))
+    level_text = SCORE_FONT.render("Level: " + str(level), 1, WHITE)
+    WINDOW.blit(score_text, (WIDTH - score_text.get_width() - 10, 2))
+    WINDOW.blit(level_text, (10, 2))
 
 
 def main():
@@ -96,13 +98,14 @@ def main():
     clock = pygame.time.Clock()
     score = 0
     global speed
+    global level
 
     snake = SNAKE()
     fruit = FRUIT(snake.snake_list)
 
     while run:
         clock.tick(FPS)
-        display_board(score)
+        display_board(score, level)
 
         if fruit.position in snake.snake_list:
             fruit = FRUIT(snake.snake_list)
@@ -110,10 +113,11 @@ def main():
             snake.snake_grow()
 
             if score % 5 == 0:
-                print('yes')
                 speed -= 10
                 pygame.time.set_timer(TIMER, 0)
                 pygame.time.set_timer(TIMER, speed)
+
+                level += 1
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
