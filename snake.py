@@ -19,6 +19,7 @@ GREEN = (0, 255, 0)
 FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
+MAX_SPEED = 50
 
 SCORE_FONT = pygame.font.SysFont("comicsans", 25)
 
@@ -88,7 +89,7 @@ def display_board(score, level):
             rectangle = pygame.Rect(across, down, BLOCK_SIZE, BLOCK_SIZE)
             pygame.draw.rect(WINDOW, WHITE, rectangle, 1)
     score_text = SCORE_FONT.render("Score: " + str(score), 1, WHITE)
-    level_text = SCORE_FONT.render("Level: " + str(level), 1, WHITE)
+    level_text = SCORE_FONT.render("Speed Level: " + str(level), 1, WHITE)
     WINDOW.blit(score_text, (WIDTH - score_text.get_width() - 10, 2))
     WINDOW.blit(level_text, (10, 2))
 
@@ -113,11 +114,14 @@ def main():
             snake.snake_grow()
 
             if score % 5 == 0:
-                speed -= 10
-                pygame.time.set_timer(TIMER, 0)
-                pygame.time.set_timer(TIMER, speed)
+                if speed > MAX_SPEED:
+                    speed -= 10
+                    pygame.time.set_timer(TIMER, 0)
+                    pygame.time.set_timer(TIMER, speed)
 
-                level += 1
+                    level += 1
+                else:
+                    level = "Max Speed"
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
