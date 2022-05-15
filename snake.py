@@ -13,11 +13,19 @@ WIDTH, HEIGHT = BLOCK_SIZE * NUM_CELLS, BLOCK_SIZE * NUM_CELLS
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
+RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 MAX_SPEED = 50
+
+COLOR_1 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+COLOR_2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+COLOR_3 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+COLOR_4 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+COLOR_5 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+COLOR_6 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 SCORE_FONT = pygame.font.SysFont("comicsans", 25)
 
@@ -52,9 +60,23 @@ class SNAKE:
         self.length = len(self.snake_list)
 
     def draw_snake(self):
-        for square in self.snake_list:
+        for ind, square in enumerate(self.snake_list):
             snake_rect = pygame.Rect(int(square.x * BLOCK_SIZE), int(square.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
-            pygame.draw.rect(WINDOW, BLUE, snake_rect)
+
+            if ind <= 10:
+                pygame.draw.rect(WINDOW, BLUE, snake_rect)
+            elif ind <= 20:
+                pygame.draw.rect(WINDOW, COLOR_1, snake_rect)
+            elif ind <= 30:
+                pygame.draw.rect(WINDOW, COLOR_2, snake_rect)
+            elif ind <= 40:
+                pygame.draw.rect(WINDOW, COLOR_3, snake_rect)
+            elif ind <= 50:
+                pygame.draw.rect(WINDOW, COLOR_4, snake_rect)
+            elif ind <= 60:
+                pygame.draw.rect(WINDOW, COLOR_5, snake_rect)
+            else:
+                pygame.draw.rect(WINDOW, COLOR_6, snake_rect)
 
     def move(self):
         copy_move = self.snake_list[:-1]
@@ -137,6 +159,8 @@ def main():
 
             if event.type == HIT:
                 run = False
+                level = 0
+                speed = 150
                 break
 
             if event.type == pygame.KEYDOWN:
