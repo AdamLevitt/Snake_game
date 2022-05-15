@@ -187,6 +187,8 @@ def main():
                 run = False
                 level = 0
                 speed = 150
+                pygame.time.set_timer(TIMER, 0)
+                pygame.time.set_timer(TIMER, speed)
                 break
 
             # Change direction basedon keys pressed and ensure cannot go in opposite direction
