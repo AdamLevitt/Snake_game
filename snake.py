@@ -12,11 +12,6 @@ pygame.mixer.init()
 BLOCK_SIZE = 40
 NUM_CELLS = 20
 WIDTH, HEIGHT = BLOCK_SIZE * NUM_CELLS, BLOCK_SIZE * NUM_CELLS
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
 FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -24,16 +19,24 @@ MAX_SPEED = 50
 
 FRUIT_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-extra-bonus-in-a-video-game-2045.wav"))
 LOSE_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-player-losing-or-failing-2042.wav"))
+
+IMAGE_0 = pygame.image.load(os.path.join("assets", "clipart1191757.png")).convert_alpha()
 IMAGE_1 = pygame.image.load(os.path.join("assets", "orange-transparent-background-7.png")).convert_alpha()
 IMAGE_2 = pygame.image.load(os.path.join("assets", "Apple-Fruit-Transparent.png")).convert_alpha()
 IMAGE_3 = pygame.image.load(os.path.join("assets", "Banana-PNG-File.png")).convert_alpha()
 IMAGE_4 = pygame.image.load(os.path.join("assets", "Grape-Transparent.png")).convert_alpha()
+
 ORANGE = pygame.transform.scale(IMAGE_1, (BLOCK_SIZE, BLOCK_SIZE))
 APPLE = pygame.transform.scale(IMAGE_2, (BLOCK_SIZE, BLOCK_SIZE))
 BANANA = pygame.transform.scale(IMAGE_3, (BLOCK_SIZE, BLOCK_SIZE))
 GRAPES = pygame.transform.scale(IMAGE_4, (BLOCK_SIZE, BLOCK_SIZE))
+SNAKE_HEAD_PIC = pygame.transform.scale(IMAGE_0, (BLOCK_SIZE, BLOCK_SIZE))
 
-
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+GREEN = (111, 207, 60)
 COLOR_1 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 COLOR_2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 COLOR_3 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
@@ -90,21 +93,33 @@ class SNAKE:
 
     def draw_snake(self):
         """display th snake"""
+
+        if self.dir == Vector2(-1, 0):
+            head = pygame.transform.rotate(SNAKE_HEAD_PIC, 270)
+        elif self.dir == Vector2(1, 0):
+            head = pygame.transform.rotate(SNAKE_HEAD_PIC, 90)
+        elif self.dir == Vector2(0, -1):
+            head = pygame.transform.rotate(SNAKE_HEAD_PIC, 180)
+        else:
+            head = SNAKE_HEAD_PIC
+
         for ind, square in enumerate(self.snake_list):
             snake_rect = pygame.Rect(int(square.x * BLOCK_SIZE), int(square.y * BLOCK_SIZE), BLOCK_SIZE, BLOCK_SIZE)
 
             # Allow for colors to be displayed randomly based on length of snake
-            if ind <= 10:
-                pygame.draw.rect(WINDOW, BLUE, snake_rect)
-            elif ind <= 20:
+            if ind == 0:
+                WINDOW.blit(head, snake_rect)
+            elif ind <= 5:
+                pygame.draw.rect(WINDOW, GREEN, snake_rect)
+            elif ind <= 15:
                 pygame.draw.rect(WINDOW, COLOR_1, snake_rect)
-            elif ind <= 30:
+            elif ind <= 25:
                 pygame.draw.rect(WINDOW, COLOR_2, snake_rect)
-            elif ind <= 40:
+            elif ind <= 35:
                 pygame.draw.rect(WINDOW, COLOR_3, snake_rect)
-            elif ind <= 50:
+            elif ind <= 45:
                 pygame.draw.rect(WINDOW, COLOR_4, snake_rect)
-            elif ind <= 60:
+            elif ind <= 55:
                 pygame.draw.rect(WINDOW, COLOR_5, snake_rect)
             else:
                 pygame.draw.rect(WINDOW, COLOR_6, snake_rect)
