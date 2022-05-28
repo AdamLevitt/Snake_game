@@ -195,7 +195,7 @@ def main():
             # Increase snake speed at some interval of growth
             if score % 5 == 0:
                 if speed > MAX_SPEED:
-                    speed -= 10
+                    speed -= 5
                     pygame.time.set_timer(TIMER, 0)
                     pygame.time.set_timer(TIMER, speed)
 
