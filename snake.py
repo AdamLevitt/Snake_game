@@ -16,6 +16,7 @@ FPS = 60
 INITIAL_SIZE = 4
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 MAX_SPEED = 50
+COLOR_FACTOR = 5
 
 FRUIT_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-extra-bonus-in-a-video-game-2045.wav"))
 LOSE_SOUND = pygame.mixer.Sound(os.path.join("assets", "mixkit-player-losing-or-failing-2042.wav"))
@@ -37,12 +38,6 @@ BLACK = (0, 0, 0)
 BLUE = (0, 0, 255)
 RED = (255, 0, 0)
 GREEN = (111, 207, 60)
-COLOR_1 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-COLOR_2 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-COLOR_3 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-COLOR_4 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-COLOR_5 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-COLOR_6 = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 SCORE_FONT = pygame.font.SysFont("comicsans", 25)
 
@@ -91,7 +86,7 @@ class SNAKE:
         self.dir = Vector2(-1, 0)
         self.length = len(self.snake_list)
 
-    def draw_snake(self):
+    def draw_snake(self, colors):
         """display th snake"""
 
         if self.dir == Vector2(-1, 0):
@@ -109,20 +104,9 @@ class SNAKE:
             # Allow for colors to be displayed randomly based on length of snake
             if ind == 0:
                 WINDOW.blit(head, snake_rect)
-            elif ind <= 5:
-                pygame.draw.rect(WINDOW, GREEN, snake_rect)
-            elif ind <= 15:
-                pygame.draw.rect(WINDOW, COLOR_1, snake_rect)
-            elif ind <= 25:
-                pygame.draw.rect(WINDOW, COLOR_2, snake_rect)
-            elif ind <= 35:
-                pygame.draw.rect(WINDOW, COLOR_3, snake_rect)
-            elif ind <= 45:
-                pygame.draw.rect(WINDOW, COLOR_4, snake_rect)
-            elif ind <= 55:
-                pygame.draw.rect(WINDOW, COLOR_5, snake_rect)
             else:
-                pygame.draw.rect(WINDOW, COLOR_6, snake_rect)
+                ref = ind // COLOR_FACTOR
+                pygame.draw.rect(WINDOW, colors[ref], snake_rect)
 
     def move(self):
         """Handle the snake movement"""
@@ -175,6 +159,8 @@ def main():
     run = True
     clock = pygame.time.Clock()
     score = 0
+    color_array = [GREEN]
+
     global speed
     global level
 
@@ -193,7 +179,7 @@ def main():
             snake.snake_grow()
 
             # Increase snake speed at some interval of growth
-            if score % 5 == 0:
+            if score % COLOR_FACTOR == 0:
                 if speed > MAX_SPEED:
                     speed -= 5
                     pygame.time.set_timer(TIMER, 0)
@@ -202,6 +188,9 @@ def main():
                     level += 1
                 else:
                     level = "Max Speed"
+
+            if snake.length % 5 == 0:
+                color_array.append((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -237,7 +226,7 @@ def main():
                     snake.dir = Vector2(1, 0)
 
         fruit.draw_fruit()
-        snake.draw_snake()
+        snake.draw_snake(color_array)
         pygame.display.update()
 
     level = 0
